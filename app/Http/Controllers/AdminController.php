@@ -6,10 +6,14 @@ use Illuminate\Http\Request;
 use DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\User; 
+
+use App\Notifications\Subscription;
+use Illuminate\Notifications\Notifiable;
+use App\User;
 
 class AdminController extends Controller
 {
+    use Notifiable;
     /**
      * Create a new controller instance.
      *
@@ -63,6 +67,9 @@ class AdminController extends Controller
             echo 'false';
             die;
         }
+
+
+
     }
     public function updatepassword(Request $request)
     {

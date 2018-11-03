@@ -3,7 +3,6 @@
 
 <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <meta name="author" content="SemiColonWeb" />
 
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,400i,700|Raleway:300,400,500,600,700|Crete+Round:400i"
         rel="stylesheet" type="text/css" />
@@ -15,8 +14,33 @@
     <link rel="stylesheet" href="/css/magnific-popup.css" type="text/css" />
     <link rel="stylesheet" href="/css/responsive.css" type="text/css" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        .pagination li:first-child{
+            display: none;
+            border: 5px black solid;
+        }
+        .pagination li:first-child{
+            display: none;
+            border: 5px black solid;
+        }
+        .pagination li a{
+            color: #40c0cb;
+            border-color: #40c0cb;
+            border-radius: 3px;
+            
+        }
 
-    <title>Full Width Layout | Canvas</title>
+        .pagination li{
+            border-radius: 3px;
+            float: right;
+        }
+        .pagination li:hover{
+            color: black;
+            border-radius: 3px;
+        }
+        
+    </style>
+    <title>Online Test System </title>
 </head>
 
 <body class="stretched">
@@ -87,14 +111,25 @@
                 <div class="container clearfix">
 
                     <div class="col_full">
+                        @if (!empty( $test->hasMorePages() ))
+                            <div class="btn btn-danger t700">Note: Question will be automatically changed after completing this time</div>
+                                <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+                                <div class="tright t700"  style="font-size: 32px;">Time Left
+                                <span class="countdown tright t700 " style="font-size: 32px;"></span>
+                            </div>
+                        @endif
 
                     @if(!empty($test))
                         @if (count($test) >  0)
                             <form class="form form-horizontal form-bordered" class="repeater" method="POST" action="{{ url('/submittest') }}">
                             <input type="hidden" name="category_type" id="category_type" value="">
+                            <input type="hidden" name="attempting_id" id="attempting_id" value="{{$attempting_id}}">
+                            <input type="hidden" name="count" id="count" value="{{$test->total()}}">
+                            
+
                             {{csrf_field()}}
                             @foreach ($test as $i => $item)
-                                <b>{!! $i+1 !!}   {{')'}}  {{$item->test_question}}</b>
+                                <b>{!! $test->currentPage()  !!}  {{')'}}  {{$item->test_question}}</b>
                             <ul>@foreach ($item->options as $item2)
                                     <div class="col-sm-10">
                                         <div class="form-check">
@@ -106,20 +141,42 @@
                                     </div>
                                 @endforeach</ul>
                             @endforeach
-                                    <div class="form-group row">
-                                        <div class="col-sm-10">
-                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                        </div>
-                                    </div>
+
+                            @if (!empty( $test->hasMorePages() ))
+                            {{--  {{ $test->links() }}  --}}
+                            <div class="form-group row">
+                                <div class="col-sm-6">
+                                    <button type="button" class="nextpage btn btn-primary">Next</button>
+                                </div>
+                                <div class="col-sm-6">
+                                    <button type="button" class="skippage tright btn btn-primary">Skip</button>
+                                </div>
+                            </div>
+
+                                
+                            @else
+                            <div class="form-group row">
+                                <div class="col-sm-6">
+                                    <button type="submit" class="nextpage btn btn-primary align-right">Submit</button>
+                                </div>
+                            </div>
+                            @endif
                                 </form>
                             @else 
                                 <h1 class="text-center">No test Found</h1>
                             @endif
                         @endif
                                 
-                             @if(!empty($result))
-                                {{$result}}
-                                {{'You have just completed you submission '}}
+                             @if(!empty($correctresult))
+                                {{$correctresult}}
+                            @endif
+                            <br>
+                             @if(!empty($wrongresult))
+                                {{$wrongresult}}
+                            @endif
+                            <br>
+                             @if(!empty($skippedresult))
+                                {{$skippedresult}}
                             @endif
                     </div>
                     <div class="clear"></div>
@@ -319,13 +376,112 @@
 
     <script src="/js/functions.js"></script>
     <script>
+        var redirectlink = "";
+        var category_url = "";
+        var pageno = "";
+        //on ready function
         $( document ).ready(function() {
-            var url = window.location.href;
-            var array = url.split('/');
-            var lastsegment = array[array.length-1];    
-            $("#category_type").val(lastsegment);
+            if(getUrlParameter('page') != null)
+            {
+                pageno = parseInt(getUrlParameter('page')) + parseInt(1);
+                var url = 'http://' + window.location.hostname + ":" + window.location.port + window.location.pathname +'?page=' + pageno;
+                redirectlink = url;
+                var link = "location.href='" + url + "'";
+                console.log(getUrlParameter('page'));
+            }
+            else{
+                var url = 'http://' + window.location.hostname + ":" + window.location.port + window.location.pathname +'?page=' + 2;
+                var link = "location.href='" + url + "'";
+                redirectlink = url;
+                console.log('No parameters');
+            }
+            var pagecount = $('count').val();
+            if(pageno > pagecount){
+                $("form").submit(function(){
+                    alert("Submitted");
+                });
+            }
+            var a = location.href.substr(location.href.lastIndexOf('/') + 1);
+            var b = a.split("?");
+            category_url = b[0];
+            var category_type =$('#category_type').val(category_url);
         });
-    </script>
-</body>
 
+        //on click function
+        $('.nextpage').click(function(){
+            var submittedanswer = $("input[type='radio']:checked").val();
+            var a = $("input[type='radio']:checked").attr('name');
+            //it return to same page if radio button is not set 
+            if(a == null)return;
+            addDatausingAjax(submittedanswer,a);
+        });
+        $('.skippage').click(function(){
+            var submittedanswer = 0;
+            var a = $("input[type='radio']").attr('name');
+            //it return to same page if radio button is not set 
+            addDatausingAjax(submittedanswer,a);
+            location.replace(redirectlink);
+        });
+        function addDatausingAjax(submittedanswer,a)
+        {           
+            
+            var attempting_id = $("#attempting_id").val();
+            var category_type =$('#category_type').val(); 
+            var question_id = a.split("_");
+            
+            $.ajax({
+                type:"POST",
+                url:"http://127.0.0.1:8000/api/TestResult",
+                data: {
+                    "test_id" : '0',
+                    "user_id" : attempting_id,
+                    'test_category' : category_type,
+                    "question_id" : question_id[question_id.length-1],
+                    "submittedanswer" : submittedanswer
+                },
+                success: function(response) {
+                    alert("Data added");
+                }
+            });
+            location.replace(redirectlink);
+        }
+
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        };
+
+        function clock()
+        {
+            var timer2 = "2:00";
+            var interval = setInterval(function() {
+                var timer = timer2.split(':');
+                //by parsing integer, I avoid all extra string processing
+                var minutes = parseInt(timer[0], 10);
+                var seconds = parseInt(timer[1], 10);
+                --seconds;
+                minutes = (seconds < 0) ? --minutes : minutes;
+                if (minutes < 0){
+                        clearInterval(interval);
+                        //redirect after time completed
+                        var submittedanswer = 0;
+                        var a = $("input[type='radio']").attr('name');
+                        //it return to same page if radio button is not set 
+                        addDatausingAjax(submittedanswer,a);
+                        location.replace(redirectlink);
+                    } 
+                seconds = (seconds < 0) ? 59 : seconds;
+                seconds = (seconds < 10) ? '0' + seconds : seconds;
+                //minutes = (minutes < 10) ?  minutes : minutes;
+                $('.countdown').html(minutes + ':' + seconds);
+                timer2 = minutes + ':' + seconds;
+            }, 1000);
+        }
+        // Calling Clock function
+        clock();
+    </script>
+    
+</body>
 </html>

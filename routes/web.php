@@ -1,5 +1,6 @@
 <?php
-
+use App\Notifications\Subscription;
+use App\User;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -29,6 +30,11 @@ Route::post('admin/password/reset', 'Auth\ResetPasswordController@reset');
 
 Route::get('/', function () {
 
+    $user = auth()->user();
+    $user->notify(new Subscription($user));
+    // Notification::route('mail', 'taylor@example.com')
+    //         ->notify(new Subscription($user));
+
     return view("welcome");
 })->name('comingsoon');
 
@@ -44,7 +50,20 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/admin/ShowTest', 'TestController@ShowTest')->name('ShowTest');
     Route::match(['get', 'post'], '/admin/addposts', 'TestController@addtest')->name('addtest');
     Route::match(['get', 'post'], '/test/{slug}', 'TestController@taketest')->name('taketest');
+    Route::match(['get', 'post'], '/starttest/{slug}', 'TestController@starttest')->name('starttest');
+    
+    Route::get('/tests/{testcategory}', 'TestController@starttest')->name('StartTest');
+
+
+    Route::get('/tests', 'TestController@AllTests')->name('AllTests');
+    Route::match(['get', 'post'], '/submittest', 'TestController@submittest')->name('submittest');
+
+    //notification 
+    
+    Route::get('/notification/MarkAllAsRead', function() {
+        auth()->user()->unreadNotifications->markAsRead();
+        return redirect()->back();
+    })->name('MarkAllAsRead');
+    
 });
 
-Route::match(['get', 'post'], '/starttest/{slug}', 'TestController@starttest')->name('starttest');
-Route::match(['get', 'post'], '/submittest', 'TestController@submittest')->name('submittest');

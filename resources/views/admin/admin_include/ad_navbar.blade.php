@@ -188,29 +188,49 @@
   </li>
   <li class="dropdown dropdown-notification nav-item">
     <a class="nav-link nav-link-label" href="#" data-toggle="dropdown"><i class="ficon ft-bell"></i>
-      <span class="badge badge-pill badge-default badge-danger badge-default badge-up badge-glow">5</span>
+      @if (auth()->user()->unreadNotifications->count() > 0)
+        <span class="badge badge-pill badge-default badge-danger badge-default badge-up badge-glow">{{auth()->user()->unreadNotifications->count()}}</span>
+      @endif
     </a>
     <ul class="dropdown-menu dropdown-menu-media dropdown-menu-right">
       <li class="dropdown-menu-header">
         <h6 class="dropdown-header m-0">
           <span class="grey darken-2">Notifications</span>
         </h6>
-        <span class="notification-tag badge badge-default badge-danger float-right m-0">5 New</span>
+        @if(auth()->user()->unreadNotifications->count() > 0)
+          <span class="notification-tag badge badge-default badge-danger float-right m-0">{{auth()->user()->unreadNotifications->count()}} New</span>
+        @endif
       </li>
       <li class="scrollable-container media-list w-100">
+        @foreach (auth()->user()->unreadNotifications as $notification)
         <a href="javascript:void(0)">
-          <div class="media">
+          <div class="media" style="background:#F2F2F2; border-radius:5px;">
             <div class="media-left align-self-center"><i class="ft-plus-square icon-bg-circle bg-cyan"></i></div>
             <div class="media-body">
-              <h6 class="media-heading">You have new order!</h6>
-              <p class="notification-text font-small-3 text-muted">Lorem ipsum dolor sit amet, consectetuer elit.</p>
+              <h6 class="media-heading">{{$notification->data['title']}}</h6>
+              <p class="notification-text font-small-3 text-muted">{{$notification->data['body']}}</p>
               <small>
                 <time class="media-meta text-muted" datetime="2015-06-11T18:29:20+08:00">30 minutes ago</time>
               </small>
             </div>
           </div>
         </a>
+        @endforeach
+        @foreach (auth()->user()->readNotifications as $notification)
         <a href="javascript:void(0)">
+          <div class="media">
+            <div class="media-left align-self-center"><i class="ft-plus-square icon-bg-circle bg-cyan"></i></div>
+            <div class="media-body">
+              <h6 class="media-heading">{{$notification->data['title']}}</h6>
+              <p class="notification-text font-small-3 text-muted">{{$notification->data['body']}}</p>
+              <small>
+                <time class="media-meta text-muted" datetime="2015-06-11T18:29:20+08:00">30 minutes ago</time>
+              </small>
+            </div>
+          </div>
+        </a>
+        @endforeach
+        {{--  <a href="javascript:void(0)">
           <div class="media">
             <div class="media-left align-self-center"><i class="ft-download-cloud icon-bg-circle bg-red bg-darken-1"></i></div>
             <div class="media-body">
@@ -255,9 +275,9 @@
               </small>
             </div>
           </div>
-        </a>
+        </a>  --}}
       </li>
-      <li class="dropdown-menu-footer"><a class="dropdown-item text-muted text-center" href="javascript:void(0)">Read all notifications</a></li>
+      <li class="dropdown-menu-footer"><a class="dropdown-item text-muted text-center" href="{{route('MarkAllAsRead')}}">Read all notifications</a></li>
     </ul>
   </li>
   <li class="dropdown dropdown-notification nav-item">

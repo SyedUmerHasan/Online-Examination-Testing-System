@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Test;
 use App\Category;
 use App\Answer;
+use App\TestResult;
 use Auth;
 
 class TestController extends Controller
@@ -64,30 +65,63 @@ class TestController extends Controller
     public function starttest($slug = 'HTML')
     {
         $options = Category::all();
-        $test = Test::with('options')->where('test_category', $slug)->get();
-        return view('Test.test_page')   ->with(compact('test'))
-                                        ->with(compact('options'));
+        $test = Test::with('options')->where('test_category', $slug)->Paginate(1);
+        $user = Auth::user();
+
+        return view('Test.test_page')->with(compact('test'))
+                                    ->with('attempting_id', $user->id)
+                                    ->with(compact('options'));
+    }
+    public function AllTests()
+    {
+        $test = Test::select('test_category')->where('test_status', '1')->distinct()->get();
+        // dd($test);
+        return view('Test.test_lists')->with(compact('test'));
     }
     public function submittest(Request $request)
     {
-        // abort('sduygdsgu');
         if ($request->isMethod('post')) {
             $CorrrectAnswers = 0;
-            $test = Test::where('test_category', $request->category_type)->join('answer', 'test.test_id', '=', 'answer.test_id')->where('answer.answer','1')->get();
-           // dd($test);
-            foreach ($test as $item) {
-                // abort('di');
-                $DynamicFormName = 'answer_'.$item->test_id;
-                $SubmittedAnswer = $request->$DynamicFormName;
-                if($SubmittedAnswer == $item->answer_id){
-                    $CorrrectAnswers++;
-                }
-                    echo '<br>';
-            }
-            // echo 'You have successfully submiited '
+            $WrongAnswers = 0;
+            $QuestionSkipped = 0;
+            $user = Auth::user();
+            $test = Test::where('test_category', $request->category_type)->join('answer', 'test.test_id', '=', 'answer.test_id')->where('answer.answer','1')->orderBy('test.test_id', 'asc')->get();
+            $testresult = TestResult::where('test_category', $request->category_type)->where('user_id',$user->id)->distinct('question_id') ->orderBy('question_id', 'asc')->get();
             // dd($test);
-            $result = "You have submitted ".$CorrrectAnswers." Answers";
-            return view('Test.test_page')->with(compact('result'));
+            foreach ($test as $key => $item) 
+            {
+                try {
+                    $res=$testresult[$key];
+                    if($res->question_id == $item->test_id)
+                    {
+                        // $DynamicFormName = 'answer_'.$item->test_id;
+                        if ($res->submittedanswer == 0)
+                        {
+                            $QuestionSkipped++;
+                        }
+                        else{
+                            if ($res->submittedanswer == $item->answer_id) {
+                                $CorrrectAnswers++;
+                            }
+                            else if ($res->submittedanswer != $item->answer_id) {
+                                $WrongAnswers++;
+                            }
+                        }
+                        echo '<br>';
+                    }
+                }
+                //catch exception
+                catch(Exception $e) {
+                    $QuestionSkipped++;
+                }
+            }
+            TestResult::where('test_category', $request->category_type)->where('user_id',$user->id)->delete();
+            
+            $correctresult = "You have submitted " . $CorrrectAnswers . " correct  Answers";
+            $wrongresult = "You have submitted " . $WrongAnswers . " wrong Answers";
+            $skippedresult = "You have skipped " . $QuestionSkipped . " question";
+            
+            return view('Test.test_page')->with(compact('wrongresult'))->with(compact('correctresult'))->with(compact('skippedresult'));
         }
         else{
             return back();
