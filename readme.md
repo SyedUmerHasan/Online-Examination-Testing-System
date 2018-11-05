@@ -17,7 +17,7 @@ Online Examination System in PHP is very useful to learn it.
 In an online examination system examine get their user id and password with his/her admit card. This id is already saved in the examination server. When examining login to the server he/she get his/her profile already register. On the certain time examine gets the message to start the examination. All answers given by examining are saved into the server with his/her profile information. Online examination system also allows correcting the answer if the examine needed to change any answer in the examination time duration, however, after the time duration any change will not allow. This also makes c checking the answer easy and error proof as computers are more accurate than man and provide fast results too. Php is a web base language so we can create an online examination system in PHP.
 
 Administrator of Online Examination has multiple features such as Add, Delete, Update Topics and Question.
-To Login as Admin put inside your browser “http://www.applicationname/admin”
+To Login as Admin put inside your browser “http://127.0.0.1:8000/admin/”
 
  
 
@@ -40,7 +40,7 @@ Brief overview of the technology:
 * CSS
 
 ### HTML:
-HTML is used to create and save web document. E.g. Notepad/Notepad++
+HTML is used to create and save web document. E.g. Notepad/Notepad++ , VS Code , Brackets
 ### CSS:
 (Cascading Style Sheets) Create attractive Layout
 ### JavaScript:
@@ -71,10 +71,10 @@ Laravel is accessible, yet powerful, providing tools needed for large, robust ap
 
 
 # Software Requirement(any one)
-WAMP Server
-XAMPP Server
-MAMP Server
-LAMP Server
+ * WAMP Server
+ * XAMPP Server
+ * MAMP Server
+ * LAMP Server
  
 
 # Installation Steps
@@ -82,14 +82,18 @@ LAMP Server
 2. Put this file inside "c:/wamp/www/" .
 3. Database Configuration
 Open phpmyadmin
-Create Database named quiz_new.
-Import database quiz_new.sql from downloaded folder(inside database)
+Create Database named testingwebsite.
+Import database testingwebsite.sql from downloaded folder(inside database)
 4. Open Your browser put inside "http://localhost/testingwebsite/"
 5. To Login as admin put "http://localhost/testingwebsite/admin"
 
 ## Admin Login Details
 * Login Id: admin@gmail.com
 * Password: admin123
+
+## Admin Login Details
+* Login Id: username@gmail.com
+* Password: user123
 
 
 
