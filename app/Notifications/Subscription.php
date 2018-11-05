@@ -41,8 +41,15 @@ class Subscription extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
+        // return (new MailMessage)
+        //             ->view('welcome', ['user' => $this->user]);
+        $username = auth()->user()-name;
         return (new MailMessage)
-                    ->view('welcome', ['user' => $this->user]);
+            ->greeting('Hello! '.$username)
+            ->line('You have recently logged in!')
+            ->line('If you havent logged in click on this link')
+            ->action('View Invoice', 'https://www.google.com')
+            ->line('Thank you!');
     }
 
     /**

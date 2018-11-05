@@ -47,53 +47,8 @@
 
     <div id="wrapper" class="clearfix">
 
-        <header id="header" class="full-header">
-            <div id="header-wrap">
-                <div class="container clearfix">
-                    <div id="primary-menu-trigger"><i class="icon-reorder"></i></div>
+        @include('Test.inc.header')
 
-                    <div id="logo">
-                        <a href="index.html" class="standard-logo" data-dark-logo="/images/logo-dark.png"><img src="/images/logo.png"
-                                alt="Canvas Logo"></a>
-                        <a href="index.html" class="retina-logo" data-dark-logo="/images/logo-dark@2x.png"><img src="/images/logo@2x.png"
-                                alt="Canvas Logo"></a>
-                    </div>
-
-                    <nav id="primary-menu">
-                        <ul>
-                            <li>
-                                <a href="#">
-                                    <div>Home</div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <div>About us </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <div>Contact Us</div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#">
-                                    <div>Our Team</div>
-                                </a>
-                            </li>
-
-                        </ul>
-
-                        <div id="top-search">
-                            <a href="#" id="top-search-trigger"><i class="icon-search3"></i><i class="icon-line-cross"></i></a>
-                            <form action="search.html" method="get">
-                                <input type="text" name="q" class="form-control" value="" placeholder="Type &amp; Hit Enter..">
-                            </form>
-                        </div>
-                    </nav>
-                </div>
-            </div>
-        </header>
 
         <section id="page-title">
             <div class="container clearfix">
@@ -111,21 +66,23 @@
                 <div class="container clearfix">
 
                     <div class="col_full">
-                        @if (!empty( $test->hasMorePages() ))
-                            <div class="btn btn-danger t700">Note: Question will be automatically changed after completing this time</div>
-                                <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-                                <div class="tright t700"  style="font-size: 32px;">Time Left
-                                <span class="countdown tright t700 " style="font-size: 32px;"></span>
-                            </div>
-                        @endif
+                            @if(empty($correctresult) || empty($wrongresult) || empty($skippedresult))
+                                @if (!empty( $test->hasMorePages() ))
+                                    <div class="btn btn-danger t700">Note: Question will be automatically changed after completing this time</div>
+                                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+                                        <div class="tright t700"  style="font-size: 32px;">Time Left
+                                        <span class="countdown tright t700 " style="font-size: 32px;"></span>
+                                    </div>
+                                @endif
+                            @endif
 
                     @if(!empty($test))
                         @if (count($test) >  0)
-                            <form class="form form-horizontal form-bordered" class="repeater" method="POST" action="{{ url('/submittest') }}">
+                            <form class="form form-horizontal form-bordered" id="submittest" class="repeater" method="POST" action="{{ url('/submittest') }}">
                             <input type="hidden" name="category_type" id="category_type" value="">
                             <input type="hidden" name="attempting_id" id="attempting_id" value="{{$attempting_id}}">
                             <input type="hidden" name="count" id="count" value="{{$test->total()}}">
-                            
+                            <input type="hidden" name="usertestid" id="usertestid" value="{{ Session::get('usertestid') }}">
 
                             {{csrf_field()}}
                             @foreach ($test as $i => $item)
@@ -157,7 +114,7 @@
                             @else
                             <div class="form-group row">
                                 <div class="col-sm-6">
-                                    <button type="submit" class="nextpage btn btn-primary align-right">Submit</button>
+                                    <button type="button" class="submitpage btn btn-primary align-right">Submit</button>
                                 </div>
                             </div>
                             @endif
@@ -379,28 +336,38 @@
         var redirectlink = "";
         var category_url = "";
         var pageno = "";
+        var TotalPage = 0;
         //on ready function
         $( document ).ready(function() {
+            TotalPage = $('#count').val();
             if(getUrlParameter('page') != null)
             {
+
                 pageno = parseInt(getUrlParameter('page')) + parseInt(1);
                 var url = 'http://' + window.location.hostname + ":" + window.location.port + window.location.pathname +'?page=' + pageno;
-                redirectlink = url;
+                if(pageno > TotalPage)
+                {
+                    redirectlink = "http://127.0.0.1:8000/submittest";
+                }
+                else{
+                    redirectlink = url;
+                }
                 var link = "location.href='" + url + "'";
                 console.log(getUrlParameter('page'));
             }
             else{
                 var url = 'http://' + window.location.hostname + ":" + window.location.port + window.location.pathname +'?page=' + 2;
                 var link = "location.href='" + url + "'";
-                redirectlink = url;
+                if(pageno > TotalPage)
+                {
+                    redirectlink = "http://127.0.0.1:8000/submittest";
+                }
+                else{
+                    redirectlink = url;
+                }
                 console.log('No parameters');
             }
-            var pagecount = $('count').val();
-            if(pageno > pagecount){
-                $("form").submit(function(){
-                    alert("Submitted");
-                });
-            }
+
             var a = location.href.substr(location.href.lastIndexOf('/') + 1);
             var b = a.split("?");
             category_url = b[0];
@@ -414,6 +381,16 @@
             //it return to same page if radio button is not set 
             if(a == null)return;
             addDatausingAjax(submittedanswer,a);
+            location.replace(redirectlink);
+        });
+        
+        $('.submitpage').click(function(){
+            var submittedanswer = $("input[type='radio']:checked").val();
+            var a = $("input[type='radio']:checked").attr('name');
+            //it return to same page if radio button is not set 
+            if(a == null)return;
+            addDatausingAjax(submittedanswer,a);
+            $("#submittest").submit();
         });
         $('.skippage').click(function(){
             var submittedanswer = 0;
@@ -428,12 +405,13 @@
             var attempting_id = $("#attempting_id").val();
             var category_type =$('#category_type').val(); 
             var question_id = a.split("_");
+            var usertestid =$('#usertestid').val(); 
             
             $.ajax({
                 type:"POST",
                 url:"http://127.0.0.1:8000/api/TestResult",
                 data: {
-                    "test_id" : '0',
+                    "test_id" : usertestid,
                     "user_id" : attempting_id,
                     'test_category' : category_type,
                     "question_id" : question_id[question_id.length-1],
@@ -443,7 +421,6 @@
                     alert("Data added");
                 }
             });
-            location.replace(redirectlink);
         }
 
         function getUrlParameter(name) {

@@ -38,9 +38,18 @@
           </ul>
         </li>
 
+        <li class=" nav-item"><a href="/admin/CreateTest"><i class="la la-television"></i><span class="menu-title" data-i18n="nav.templates.main">Create Test</span></a>
+          <ul class="menu-content">
+            <li class=" nav-item"><a href="/admin/CreateTest"><i class="la la-television"></i><span class="menu-title" data-i18n="nav.templates.main">Add New Test</span></a></li>
+            @if (!empty($testresult) || isset($testresult))
+              @foreach ($testresult as $item)
+                <li><a class="menu-item" href="/admin/test/{{$item->test_category}}" data-i18n="nav.templates.vert.main">{{$item->test_category}}</a></li>
+              @endforeach
+            @endif
+          </ul>
+        </li>
 
-        <li class=" nav-item"><a href="/admin/CreateTest"><i class="la la-graduation-cap"></i><span class="menu-title" data-i18n="nav.templates.main">Create Test</span></a></li>
+
       </ul>
     </div>
   </div>
-  

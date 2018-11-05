@@ -2,71 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use App\Test;
 use App\Category;
 use App\Answer;
 use App\TestResult;
 use Auth;
+use View;
+use App\UserTestResult;
 
 class TestController extends Controller
 {
-    public function CreateTest()
+    public function __construct()
     {
-        $options = Category::all();
-        return view('admin.admin_pages.create_test')->with(compact('options'));
+        $this->middleware('users');
     }
-    public function addtest(Request $request)
-    {
-        if ($request->isMethod('post')) {
-            $user = Auth::user();
-            $test = new Test();        
-            $test->user_id = $user->id;
-            $test->test_question = $request->TestTitle;
-            $test->test_status = $request->TestStatus;
-            $test->test_category = $request->TestCategory;
-            $test->save();
-            $findtest = Test::where('test_question',$request->TestTitle)->first();
-            $ans = $request->results; 
-            $count = 0;
-            foreach ($ans as $item) {
-                if(isset($item))
-                {
-                    $answer =  new Answer();
-                    $answer->user_id = $user->id;
-                    $answer->test_id = $findtest->test_id;
-                    $answer->answer_title = $request->results[$count]['answerstext'];
-                    if(isset($request->results[$count]['answers']))
-                    {
-                        $answer->answer = '1';
-                    }
-                    $answer->save();
-                }
-                $count+=1;
-            }
-            return back();
-        }
-        else{
-            return back();
-        }
-    }
-    public function ShowTest()
-    {        
-        $test = Test::with('options')->get();
-        return view('admin.admin_pages.show_test')->with(compact('test'));
-    }
-    public function taketest($slug = 'HTML')
-    {
-        $options = Category::all();
-        $test = Test::with('options')->where('test_category', $slug)->get();
-        return view('admin.admin_pages.show_test')->with(compact('test'))
-        ->with(compact('options'));
-    }
+
     public function starttest($slug = 'HTML')
     {
+        $user = Auth::user();
+
         $options = Category::all();
         $test = Test::with('options')->where('test_category', $slug)->Paginate(1);
-        $user = Auth::user();
 
         return view('Test.test_page')->with(compact('test'))
                                     ->with('attempting_id', $user->id)
@@ -87,44 +45,81 @@ class TestController extends Controller
             $user = Auth::user();
             $test = Test::where('test_category', $request->category_type)->join('answer', 'test.test_id', '=', 'answer.test_id')->where('answer.answer','1')->orderBy('test.test_id', 'asc')->get();
             $testresult = TestResult::where('test_category', $request->category_type)->where('user_id',$user->id)->distinct('question_id') ->orderBy('question_id', 'asc')->get();
-            // dd($test);
-            foreach ($test as $key => $item) 
-            {
-                try {
-                    $res=$testresult[$key];
-                    if($res->question_id == $item->test_id)
+            $i = 0;
+            foreach ($test as $item1) {
+                $i++;
+                foreach ($testresult as $item2) {
+                    if ($item2->submittedanswer == 0 && $item1->test_id == $item2->question_id ) {
+                        $QuestionSkipped++;
+                        echo 'I am skipping'.$i;
+                        echo "<br>";
+                        break;
+                    } 
+                    else 
                     {
-                        // $DynamicFormName = 'answer_'.$item->test_id;
-                        if ($res->submittedanswer == 0)
-                        {
-                            $QuestionSkipped++;
-                        }
-                        else{
-                            if ($res->submittedanswer == $item->answer_id) {
+                        if ($item2->submittedanswer == $item1->answer_id && $item1->test_id == $item2->question_id) {
+                            if($item1->answer == 1)
+                            {
                                 $CorrrectAnswers++;
+                                echo  $i . ' is correct';
+                                break;
                             }
-                            else if ($res->submittedanswer != $item->answer_id) {
+                        } 
+                        else if ($item2->submittedanswer != $item1->answer_id && $item1->test_id == $item2->question_id) {
+                            if ($item1->answer == 1) {
                                 $WrongAnswers++;
+                                echo $i . ' is wrong';
+                                break;
                             }
                         }
-                        echo '<br>';
                     }
                 }
-                //catch exception
-                catch(Exception $e) {
-                    $QuestionSkipped++;
-                }
             }
-            TestResult::where('test_category', $request->category_type)->where('user_id',$user->id)->delete();
             
-            $correctresult = "You have submitted " . $CorrrectAnswers . " correct  Answers";
-            $wrongresult = "You have submitted " . $WrongAnswers . " wrong Answers";
-            $skippedresult = "You have skipped " . $QuestionSkipped . " question";
-            
-            return view('Test.test_page')->with(compact('wrongresult'))->with(compact('correctresult'))->with(compact('skippedresult'));
+            // $AddUserResult = (UserTestResult::where('user_id', $user->id)->where('test_category', $request->category_type)) ? UserTestResult::find($user->id) :new UserTestResult();
+            $usertestid = Session::get('usertestid');
+            $AddUserResult = UserTestResult::where('user_id', $user->id)
+                            ->where('test_category', $request->category_type)
+                            ->where('user_test_result_id', $usertestid)
+                            ->update([
+                    'correctanswers' => $CorrrectAnswers,
+                    'wronganswers' => $WrongAnswers,
+                    'skipanswers' => $QuestionSkipped
+                ]);
+
+            // UserTestResult::firstOrCreate([
+            //     'user_id'=>$user->id,
+            //     'test_category'=>$request->category_type
+            // ],[
+            //     'correctanswers' => $CorrrectAnswers,
+            //     'wronganswers' => $WrongAnswers,
+            //     'skipanswers' => $QuestionSkipped
+            //     ]);
+                
+                $correctresult = "You have submitted " . $CorrrectAnswers . " correct  Answers";
+                $wrongresult = "You have submitted " . $WrongAnswers . " wrong Answers";
+                $skippedresult = "You have skipped " . $QuestionSkipped . " question";
+                
+                // View::make('Test.test_page')
+                session()->forget('usertestid');
+                TestResult::where('test_category', $request->category_type)->where('user_id',$user->id)->delete();
+            return View::make('Test.test_page')->with(compact('wrongresult'))->with(compact('correctresult'))->with(compact('skippedresult'));
         }
         else{
             return back();
         }
+    }
+    public function ConfirmTest($testcategory)
+    {
+        $user = Auth::user();
+
+        $AddUserResult = new UserTestResult();
+        $AddUserResult->user_id = $user->id;
+        $AddUserResult->test_category = $testcategory;
+        $AddUserResult->save();
+        $usertestid = $AddUserResult->user_test_result_id;
+        Session::put('usertestid', $usertestid);
+        return view('Test.test_confirm');
+        
     }
 }

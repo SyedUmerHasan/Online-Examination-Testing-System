@@ -32,7 +32,7 @@
 data-open="click" data-menu="vertical-menu" data-col="2-columns">
   <!-- fixed-top-->
   <?php echo $__env->make('admin.admin_include.ad_navbar', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
-  <?php echo $__env->make('admin.admin_include.ad_sidebar', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+  <?php echo $__env->make('admin.admin_include.ad_sidebar',['testresult' => $testresult], array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
   <div class="app-content content">
     <div class="content-wrapper">
       <div class="content-header row">

@@ -47,44 +47,14 @@
 
     <div id="wrapper" class="clearfix">
 
-        <header id="header" class="full-header">
-            <div id="header-wrap">
-                <div class="container clearfix">
-                    <div id="primary-menu-trigger"><i class="icon-reorder"></i></div>
-
-                    <div id="logo">
-                        <a href="#" class="standard-logo" data-dark-logo="/images/logo-dark.png"><img src="/images/logo.png"
-                                alt="Canvas Logo"></a>
-                        <a href="#" class="retina-logo" data-dark-logo="/images/logo-dark@2x.png"><img src="/images/logo@2x.png"
-                                alt="Canvas Logo"></a>
-                    </div>
-
-                    <nav id="primary-menu">
-                        <ul>
-                            <li>
-                                <a href="{{ url('tests') }}">
-                                    <div>All Tests</div>
-                                </a>
-                            </li>
-                        </ul>
-
-                        <div id="top-search">
-                            <a href="#" id="top-search-trigger"><i class="icon-search3"></i><i class="icon-line-cross"></i></a>
-                            <form action="search.html" method="get">
-                                <input type="text" name="q" class="form-control" value="" placeholder="Type &amp; Hit Enter..">
-                            </form>
-                        </div>
-                    </nav>
-                </div>
-            </div>
-        </header>
+        @include('Test.inc.header')
 
         <section id="page-title">
             <div class="container clearfix">
-                <h1>Test List</h1>
+                <h1>Welcome  @auth {{auth()->user()->name}} @endauth</h1>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Test Lists</li>
+                    <li class="breadcrumb-item active" aria-current="page">Welcome</li>
                 </ol>
             </div>
         </section>
@@ -94,7 +64,8 @@
                 <div class="container clearfix">
 
                     <div class="col_full">
-
+                        <h3>Welcome to Online Test Management System</h3>
+                        <p>Here we are going to take your examination Here we will be going to take your and examine your test</p>
                         <table class="table">
 						    <thead>
 							    <tr>
@@ -107,11 +78,14 @@
                             @foreach ($test as $item)
                                 <tbody>
                                     <tr>
+                                        
                                         <td>1</td>
-                                        <td>{{$item->test_category}}</td>
+                                        <td>
+                                            {{$item->test_category}}
+                                        </td>
                                         <td>
                                             <div class="col-sm-6">
-                                                <button type="button" onclick="starttest(event)" name="testname" value="{{$item->test_category}}" class="starttest btn btn-primary">Start Test</button>
+                                                <button type="button" name="testname" value="{{$item->test_category}}" class="starttest btn btn-primary">Start Test</button>
                                             </div>
                                         </td>
                                     </tr>
@@ -201,9 +175,8 @@
     <script src="/js/functions.js"></script> 
     <script>
         $('.starttest').click(function(){
-            var test_category = $(this).val()
-            var url = '/' + "test" + '/' + test_category;
-            window.location.replace(url);
+            var category = $(this).val();
+            location.href = "/confirmtest"+ "/" + category;
         });
     </script>
 </body>

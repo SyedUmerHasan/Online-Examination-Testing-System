@@ -75,4 +75,11 @@ class RegisterController extends Controller
     {
         return view('admin.admin_auth.ad_signup');
     }
+    protected function authenticated(Request $request, $user)
+    {
+        if ($user->admin == 1) {// do your margic here
+            return redirect()->route('home');
+        }
+        return redirect('/testlist');
+    }
 }

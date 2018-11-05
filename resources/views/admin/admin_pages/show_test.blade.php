@@ -130,7 +130,8 @@ data-open="click" data-menu="vertical-menu" data-col="2-columns">
 
       $(document).on('click','.selectcategory',function(){
         var cat = $("#TestCategory").val();
-        window.location.replace(cat);
+        //console.log(cat);
+        location.href = cat;
       }); 
       $(document).ready(function(){
         var url = window.location.href;
@@ -138,7 +139,7 @@ data-open="click" data-menu="vertical-menu" data-col="2-columns">
         var lastsegment = array[array.length-1];
         $('.category').each(function(){
           var cat = $(this).val();
-          console.log(cat);
+          //console.log(cat);
           if(cat == lastsegment)
           {
             $(this).prop("selected", true);

@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Hash;
 use App\Notifications\Subscription;
 use Illuminate\Notifications\Notifiable;
 use App\User;
+use App\TestResult;
+
 
 class AdminController extends Controller
 {
@@ -21,7 +23,7 @@ class AdminController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('admin');
     }
 
     /**
@@ -31,11 +33,12 @@ class AdminController extends Controller
      */
     public function index()
     {
+        $testresult = TestResult::select('test_category')->distinct('test_category')->get();
         $users = DB::table('users')->count();
         $mypagedata = array(
             'users' => $users
         );
-        return view('admin.admin_pages.ad_home')->with('mypagedata', $mypagedata);
+        return view('admin.admin_pages.ad_home')->with('mypagedata', $mypagedata)->with(compact('testresult'));
     }
     public function AdminLogin()
     {

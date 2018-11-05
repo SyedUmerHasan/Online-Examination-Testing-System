@@ -32,7 +32,7 @@
 data-open="click" data-menu="vertical-menu" data-col="2-columns">
   <!-- fixed-top-->
   @include('admin.admin_include.ad_navbar')
-  @include('admin.admin_include.ad_sidebar')
+  @include('admin.admin_include.ad_sidebar',['testresult' => $testresult])
   <div class="app-content content">
     <div class="content-wrapper">
       <div class="content-header row">

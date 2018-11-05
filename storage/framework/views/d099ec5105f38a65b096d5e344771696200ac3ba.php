@@ -38,9 +38,18 @@
           </ul>
         </li>
 
+        <li class=" nav-item"><a href="/admin/CreateTest"><i class="la la-television"></i><span class="menu-title" data-i18n="nav.templates.main">Create Test</span></a>
+          <ul class="menu-content">
+            <li class=" nav-item"><a href="/admin/CreateTest"><i class="la la-television"></i><span class="menu-title" data-i18n="nav.templates.main">Add New Test</span></a></li>
+            <?php if(!empty($testresult) || isset($testresult)): ?>
+              <?php $__currentLoopData = $testresult; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <li><a class="menu-item" href="/admin/test/<?php echo e($item->test_category); ?>" data-i18n="nav.templates.vert.main"><?php echo e($item->test_category); ?></a></li>
+              <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            <?php endif; ?>
+          </ul>
+        </li>
 
-        <li class=" nav-item"><a href="/admin/CreateTest"><i class="la la-graduation-cap"></i><span class="menu-title" data-i18n="nav.templates.main">Create Test</span></a></li>
+
       </ul>
     </div>
   </div>
-  
