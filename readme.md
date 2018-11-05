@@ -84,14 +84,14 @@ Laravel is accessible, yet powerful, providing tools needed for large, robust ap
 Open phpmyadmin
 Create Database named testingwebsite.
 Import database testingwebsite.sql from downloaded folder(inside database)
-4. Open Your browser put inside "http://localhost/testingwebsite/"
-5. To Login as admin put "http://localhost/testingwebsite/admin"
+4. Open Your browser put inside "http://127.0.0.1:8000/testingwebsite/"
+5. To Login as admin put "http://127.0.0.1:8000/testingwebsite/admin"
 
 ## Admin Login Details
 * Login Id: admin@gmail.com
 * Password: admin123
 
-## Admin Login Details
+## User Login Details
 * Login Id: username@gmail.com
 * Password: user123
 
