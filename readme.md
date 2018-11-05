@@ -7,8 +7,56 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
 </p>
 
-## About Laravel
+# Online Testing Website #
 
+Online Examination System has become a fast growing examination method because of its speed and accuracy and instance result generated. Online Examination System is also needed less manpower to conduct the examination. Almost all organizations nowadays are conducting their objective exams by Online Examination System, it saves students and examiner time in examinations. Organizations can also easily check the result of the student that they already give in an examination. As a result of this, organizations are releasing results in less time.
+Online Examination System in PHP is very useful to learn it.
+
+# What is an online examination system? #
+
+In an online examination system examine get their user id and password with his/her admit card. This id is already saved in the examination server. When examining login to the server he/she get his/her profile already register. On the certain time examine gets the message to start the examination. All answers given by examining are saved into the server with his/her profile information. Online examination system also allows correcting the answer if the examine needed to change any answer in the examination time duration, however, after the time duration any change will not allow. This also makes c checking the answer easy and error proof as computers are more accurate than man and provide fast results too. Php is a web base language so we can create an online examination system in PHP.
+
+Administrator of Online Examination has multiple features such as Add, Delete, Update Topics and Question.
+To Login as Admin put inside your browser “http://www.applicationname/admin”
+
+ 
+
+## Online examination system features ##
+
+Login system must be present and secured by the assword.
+Ability to save the answer given by the candidate along with the question.
+Answer checking system should be available.
+Could Update Profile
+Log out after the over.
+Admin Panel
+## Project objective: ##
+
+Online examination system is a non removable examination pattern of today’s life. We need more time saving and more accurate examination system as the number of applicants is increasing day by day. For all IT students and professionals, it is very important to have some basic understanding about the online examination system. On this site you will get source code with the running project. It will help you to understand the concept of the project. Here you find project in php free download.
+
+Brief overview of the technology:
+
+## Front end:
+* HTML
+* CSS
+
+### HTML:
+HTML is used to create and save web document. E.g. Notepad/Notepad++
+### CSS:
+(Cascading Style Sheets) Create attractive Layout
+### JavaScript:
+it is a programming language, commonly use with web browsers.
+## Back end:
+* PHP
+* MySQL Database
+
+### PHP:
+Hypertext Preprocessor (PHP) is a technology that allows software developers to create dynamically generated web pages, in HTML, XML, or other document types, as per client request. PHP is open source software.
+### MySQL: 
+MySql is a database, widely used for accessing querying, updating, and managing data in databases.
+
+## Framework
+
+__Laravel__
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
 
 - [Simple, fast routing engine](https://laravel.com/docs/routing).
@@ -21,29 +69,29 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 Laravel is accessible, yet powerful, providing tools needed for large, robust applications.
 
-## Learning Laravel
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of any modern web application framework, making it a breeze to get started learning the framework.
+# Software Requirement(any one)
+WAMP Server
+XAMPP Server
+MAMP Server
+LAMP Server
+ 
 
-If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 1100 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
+# Installation Steps
+1. Download zip file and Unzip file on your local server.
+2. Put this file inside "c:/wamp/www/" .
+3. Database Configuration
+Open phpmyadmin
+Create Database named quiz_new.
+Import database quiz_new.sql from downloaded folder(inside database)
+4. Open Your browser put inside "http://localhost/testingwebsite/"
+5. To Login as admin put "http://localhost/testingwebsite/admin"
 
-## Laravel Sponsors
+## Admin Login Details
+* Login Id: admin@gmail.com
+* Password: admin123
 
-We would like to extend our thanks to the following sponsors for helping fund on-going Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell):
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Pulse Storm](http://www.pulsestorm.net/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
 
 ## Contributing
 
